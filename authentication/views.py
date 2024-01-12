@@ -7,7 +7,7 @@ from logdemo import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.utils.encoding import force_bytes, force_text
+from django.utils.encoding import force_bytes,force_str
 from django.contrib.auth import authenticate, login, logout
 from . tokens import generate_token
 
@@ -54,14 +54,14 @@ def createaccount(request):
         
         # Welcome Email
         subject = "Welcome law Desk Login!!"
-        message = "Hello " + myuser.first_name + "!! \n" + "Welcome to law Desk!! \nThank you for visiting our website\n. We have also sent you a confirmation email, please confirm your email address. \n\nThanking You\nAnubhav Madhav"        
+        message = "Hello " + myuser.first_name + "!! \n" + "Welcome to law Desk!! \nThank you for visiting our website\n. We have also sent you a confirmation email, please confirm your email address. \n\nThanking You\nTeam Law Desk"        
         from_email = settings.EMAIL_HOST_USER
         to_list = [myuser.email]
         send_mail(subject, message, from_email, to_list, fail_silently=True)
         
         # Email Address Confirmation Email
         current_site = get_current_site(request)
-        email_subject = "Confirm your Email @ Law Desk - Django Login!!"
+        email_subject = "Confirm your Email @ Law Desk - Django Login!"
         message2 = render_to_string('email_confirmation.html',{
             'name': myuser.first_name,
             'domain': current_site.domain,
@@ -85,7 +85,7 @@ def createaccount(request):
 
 def activate(request,uidb64,token):
     try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
+        uid = force_str(urlsafe_base64_decode(uidb64))
         myuser = User.objects.get(pk=uid)
     except (TypeError,ValueError,OverflowError,User.DoesNotExist):
         myuser = None
@@ -96,7 +96,7 @@ def activate(request,uidb64,token):
         myuser.save()
         login(request,myuser)
         messages.success(request, "Your Account has been activated!!")
-        return redirect('login')
+        return redirect('cltlogin')
     else:
         return render(request,'activation_failed.html')
 
